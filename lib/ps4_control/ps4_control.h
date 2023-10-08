@@ -5,5 +5,6 @@ void notify();
 // // void onConnect();
 // // void onDisConnect();
 void init_ps4();
+void checkInput();
 
 #endif
