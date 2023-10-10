@@ -1,38 +1,42 @@
 #include <PS4Controller.h>
-// #include <esp_bt_device.h>
+#include <HardwareSerial.h>
 
-unsigned long lastTimeStamp = 0;
+HardwareSerial SerialPort(2); // use UART2
+
 void notify()
 {
   char messageString[200];
-  sprintf(messageString, "%4d,%4d,%4d,%4d",
-  PS4.LStickX(),
-  PS4.LStickY(),
-  PS4.RStickX(),
-  PS4.RStickY());
+  sprintf(messageString, "%4d,%4d,%4d,%4d", PS4.LStickX(), PS4.LStickY(), PS4.RStickX(), PS4.RStickY());
 }
 
-// void onConnect()
-// {
-//   Serial.println("Connected!.");
-// }
+void onConnect()
+{
+  Serial.println("Connected!.");
+}
 
-// void onDisConnect()
-// {
-//   Serial.println("Disconnected!.");    
-// }
+void onDisConnect()
+{
+  Serial.println("Disconnected!.");    
+}
 
 void init_ps4(){
   PS4.attach(notify);
-  // PS4.attachOnConnect(onConnect);
-  // PS4.attachOnDisconnect(onDisConnect);
+  PS4.attachOnConnect(onConnect);
+  PS4.attachOnDisconnect(onDisConnect);
   PS4.begin();
   Serial.println("Ready.");
 }
 
 void checkInput() {
-  // Below has all accessible outputs from the controller
-  if (PS4.isConnected()) {
+  if (PS4.isConnected())
+  {
+    // Initiate UART2 for Master EPS32
+    SerialPort.begin(115200, SERIAL_8N1, 16, 17);
+
+    // Transmit data through UART2 communication ports GPIO16 (RX) and GRIO17 (TX)
+    SerialPort.print(1);
+
+    // All accessible outputs from the controller
     if (PS4.Right()) Serial.println("Right Button");
     if (PS4.Down()) Serial.println("Down Button");
     if (PS4.Up()) Serial.println("Up Button");
@@ -59,25 +63,13 @@ void checkInput() {
     if (PS4.PSButton()) Serial.println("PS Button");
     if (PS4.Touchpad()) Serial.println("Touch Pad Button");
 
-    if (PS4.L2()) {
-      Serial.printf("L2 button at %d\n", PS4.L2Value());
-    }
-    if (PS4.R2()) {
-      Serial.printf("R2 button at %d\n", PS4.R2Value());
-    }
+    if (PS4.L2()) Serial.printf("L2 button at %d\n", PS4.L2Value());
+    if (PS4.R2()) Serial.printf("R2 button at %d\n", PS4.R2Value());
 
-    if (PS4.LStickX()) {
-      Serial.printf("Left Stick x at %d\n", PS4.LStickX());
-    }
-    if (PS4.LStickY()) {
-      Serial.printf("Left Stick y at %d\n", PS4.LStickY());
-    }
-    if (PS4.RStickX()) {
-      Serial.printf("Right Stick x at %d\n", PS4.RStickX());
-    }
-    if (PS4.RStickY()) {
-      Serial.printf("Right Stick y at %d\n", PS4.RStickY());
-    }
+    if (PS4.LStickX()) Serial.printf("Left Stick x at %d\n", PS4.LStickX());
+    if (PS4.LStickY()) Serial.printf("Left Stick y at %d\n", PS4.LStickY());
+    if (PS4.RStickX()) Serial.printf("Right Stick x at %d\n", PS4.RStickX());
+    if (PS4.RStickY()) Serial.printf("Right Stick y at %d\n", PS4.RStickY());
 
     if (PS4.Charging()) Serial.println("The controller is charging");
     if (PS4.Audio()) Serial.println("The controller has headphones attached");
@@ -88,6 +80,10 @@ void checkInput() {
     Serial.println();
     // This delay is to make the output more human readable
     // Remove it when you're not trying to see the output
-    delay(1000);
+    // delay(1000);
+  }
+  else
+  {
+    SerialPort.print(0);
   }
 }
