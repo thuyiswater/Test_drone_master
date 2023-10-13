@@ -1,8 +1,4 @@
 #include <PS4Controller.h>
-#include <HardwareSerial.h>
-
-HardwareSerial SerialPort(2); // use UART2
-
 void notify()
 {
   char messageString[200];
@@ -30,12 +26,7 @@ void init_ps4(){
 void checkInput() {
   if (PS4.isConnected())
   {
-    // Initiate UART2 for Master EPS32
-    SerialPort.begin(115200, SERIAL_8N1, 16, 17);
-
-    // Transmit data through UART2 communication ports GPIO16 (RX) and GRIO17 (TX)
-    SerialPort.print(1);
-
+  
     // All accessible outputs from the controller
     if (PS4.Right()) Serial.println("Right Button");
     if (PS4.Down()) Serial.println("Down Button");
@@ -81,9 +72,5 @@ void checkInput() {
     // This delay is to make the output more human readable
     // Remove it when you're not trying to see the output
     // delay(1000);
-  }
-  else
-  {
-    SerialPort.print(0);
   }
 }
