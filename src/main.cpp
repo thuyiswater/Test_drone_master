@@ -3,32 +3,34 @@
 #include <HardwareSerial.h>
 #include <PS4Controller.h>
 
- HardwareSerial SerialPort(2);
+HardwareSerial SerialPort2(2);
+HardwareSerial SerialPort1(1);
 void setup()
 {
   // Start serial with platform baudrate/monitor speed
-  Serial.begin(115200);
+  Serial.begin (115200);
+  SerialPort1.begin(115200, SERIAL_8N1, 4, 2);
  
  // Initiate UART2 for Master EPS32
-  SerialPort.begin(115200, SERIAL_8N1, 16, 17);
+  SerialPort2.begin(115200, SERIAL_8N1, 16, 17);
 
   init_ps4(); // Initialize PS4 Controller
 }
 
 void loop() {
-  // checkInput();
-  if (PS4.Square()){
-    SerialPort.write(1); // cai nay la stop nah :))
-  
+  if(PS4.LStickX()){
+    Serial.printf("Left Stick x at %d\n", PS4.LStickX());
+    SerialPort1.write(PS4.LStickX());
   }
-  if (PS4.Triangle()){
-    SerialPort.write(2); // cai nay la stop nah :))
+
+  if (PS4.Square()){ //increase throttle
+   Serial.println("Square Button");
+    SerialPort2.write(1); 
   }
-  if (PS4.Circle()){
-    SerialPort.write(3); // cai nay la stop nah :))
-  }
-  if (PS4.Cross()){
-    SerialPort.write(4); // cai nay la stop nah :))
+  delay(10);
+  if (PS4.Cross()){ //decrease throttle
+  Serial.println("Cross Button");
+    SerialPort2.write(2);
   }
 }
 
