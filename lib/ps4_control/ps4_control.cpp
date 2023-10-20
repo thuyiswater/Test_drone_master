@@ -20,7 +20,8 @@ void onDisConnect()
   Serial.println("Disconnected!.");    
 }
 
-void init_ps4(){
+void init_ps4() /*     INITIALIZE PS4 CONNECTION WITH MASTER ESP32     */
+{
   PS4.attach(notify);
   PS4.attachOnConnect(onConnect);
   PS4.attachOnDisconnect(onDisConnect);
@@ -50,7 +51,7 @@ void send(const UART_sentMessage* joystickvalue)
   SerialPort2.write((const char*)joystickvalue, size_UART);  // 2 bytes.
 }
 
-void joystickUART()
+void joystickUART() /*     SENDING JOYSTICK VALUES TO MIDDLE ESP32 THROUGH UART COMMUNICATION     */
 {
   send(&joystick_sentData);
   Serial.println();
