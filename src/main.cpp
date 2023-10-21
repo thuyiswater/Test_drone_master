@@ -13,5 +13,7 @@ void loop()
 {
   // Check for user inputs
   checkInput();
+  // 
+  send();
 }
 
