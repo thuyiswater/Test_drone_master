@@ -5,7 +5,7 @@
 
 HardwareSerial SerialPort2(2);
 
-int8_t joystickValue[3];
+int8_t joystickValue[4];
 
 void notify()
 {
@@ -41,27 +41,12 @@ void init_UART()
   SerialPort2.begin(115200, SERIAL_8N1, 16, 17);
 }
 
-// UART_sentMessage joystick_sentData;
-
-// void send(const UART_sentMessage* joystickvalue)
-// {
-//   SerialPort2.write((const char*)joystickvalue, sizeof(UART_sentMessage));  // 2 bytes.
-// }
-
-// void joystickUART() /*     SENDING JOYSTICK VALUES TO MIDDLE ESP32 THROUGH UART COMMUNICATION     */
-// {
-//   send(&joystick_sentData);
-//   Serial.println();
-//   delay(1000);
-// }
 void send()
 {
   SerialPort2.write(joystickValue[0]);
-  delay(10);
   SerialPort2.write(joystickValue[1]);
-  delay(10);
   SerialPort2.write(joystickValue[2]);
-  delay(10);
+  SerialPort2.write(joystickValue[3]);
 }
 
 void checkInput() {
@@ -97,18 +82,19 @@ void checkInput() {
     // if (PS4.L2()) Serial.printf("L2 button at %d\n", PS4.L2Value());
     // if (PS4.R2()) Serial.printf("R2 button at %d\n", PS4.R2Value());
 
-    // if (PS4.LStickX())
-    // {
-    //   Serial.printf("Left Stick x at %d\n", PS4.LStickX());
-    //   int8_t LSX = PS4.LStickX();
-    //   joystick_sentData.joystick = LSX;
-    //   joystickUART();
-    // }
+    if (PS4.LStickX())
+    {
+      Serial.printf("Left Stick x at %d\n", PS4.LStickX());
+      joystickValue[0] = PS4.LStickX();
+      // int8_t LSX = PS4.LStickX();
+      // joystick_sentData.joystick = LSX;
+      // joystickUART();
+    }
 
     if (PS4.LStickY())
     {
       Serial.printf("Left Stick y at %d\n", PS4.LStickY());
-      joystickValue[0] = PS4.LStickY();
+      joystickValue[1] = PS4.LStickY();
       // int8_t LSY = PS4.LStickY();
       // joystick_sentData.LJSY = LSY;
       // joystickUART();
@@ -117,7 +103,7 @@ void checkInput() {
     if (PS4.RStickX())
     {
       Serial.printf("Right Stick x at %d\n", PS4.RStickX());
-      joystickValue[1] = PS4.RStickX();
+      joystickValue[2] = PS4.RStickX();
       // int8_t RSX = PS4.RStickX();
       // joystick_sentData.RJSX = RSX;
       // joystickUART();
@@ -126,7 +112,7 @@ void checkInput() {
     if (PS4.RStickY())
     {
       Serial.printf("Right Stick y at %d\n", PS4.RStickY());
-      joystickValue[2] = PS4.RStickY();
+      joystickValue[3] = PS4.RStickY();
       // int8_t RSY = PS4.RStickY();
       // joystick_sentData.RJSY = RSY;
       // joystickUART();

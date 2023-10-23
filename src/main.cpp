@@ -13,7 +13,8 @@ void loop()
 {
   // Check for user inputs
   checkInput();
-  // 
+
+  // Send joystick values to Middle ESP32
   send();
 }
 
