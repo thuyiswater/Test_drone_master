@@ -3,18 +3,18 @@
 
 void setup()
 {
-  // Initialize UART2 for Master ESP32
+  // Initializing connection between PS4 and Master ESP32
+  init_ps4();
+
+  // Initializing UART communication between Master and Middle ESP32
   init_UART();
-  // Initialize PS4 Controller
-  init_ps4(); 
 }
 
 void loop()
 {
-  // Check for user inputs
+  // Checking for user inputs through PS4
   checkInput();
 
-  // Send joystick values to Middle ESP32
-  send();
+  // Sending UART signals from Master to Middle ESP32
+  sendUART();
 }
-
