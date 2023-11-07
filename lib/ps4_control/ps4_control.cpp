@@ -55,9 +55,19 @@ void checkInput() {
     // if (PS4.Up()) Serial.println("Up Button");
     // if (PS4.Left()) Serial.println("Left Button");
 
-    // if (PS4.Square()) Serial.println("Square Button");
+    if (PS4.Square())
+    {
+      Serial.println("Square Button");
+      Serial2.end();
+    }
     // if (PS4.Cross()) Serial.println("Cross Button");
-    // if (PS4.Circle()) Serial.println("Circle Button");
+    if (PS4.Circle())
+    {
+      Serial.println("Circle Button");
+      
+      // Initiate UART2 for Master EPS32
+      Serial2.begin(115200, SERIAL_8N1, 16, 17);
+    }
     // if (PS4.Triangle()) Serial.println("Triangle Button");
 
     // if (PS4.UpRight()) Serial.println("Up Right");
