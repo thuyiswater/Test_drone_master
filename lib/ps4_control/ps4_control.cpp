@@ -1,11 +1,7 @@
 #include <Arduino.h>
 #include <PS4Controller.h>
-#include <HardwareSerial.h>
-#include <PS4_control.h>
 
-HardwareSerial SerialPort2(2);
-
-int8_t joystickValue[3];
+int8_t joystickValue[3], button1[2];
 
 void notify()
 {
@@ -38,30 +34,16 @@ void init_UART()
   Serial.begin(115200);
  
  // Initiate UART2 for Master EPS32
-  SerialPort2.begin(115200, SERIAL_8N1, 16, 17);
+  Serial2.begin(115200, SERIAL_8N1, 16, 17);
 }
 
-// UART_sentMessage joystick_sentData;
-
-// void send(const UART_sentMessage* joystickvalue)
-// {
-//   SerialPort2.write((const char*)joystickvalue, sizeof(UART_sentMessage));  // 2 bytes.
-// }
-
-// void joystickUART() /*     SENDING JOYSTICK VALUES TO MIDDLE ESP32 THROUGH UART COMMUNICATION     */
-// {
-//   send(&joystick_sentData);
-//   Serial.println();
-//   delay(1000);
-// }
-void send()
+void sendUART()
 {
-  SerialPort2.write(joystickValue[0]);
-  delay(10);
-  SerialPort2.write(joystickValue[1]);
-  delay(10);
-  SerialPort2.write(joystickValue[2]);
-  delay(10);
+  Serial2.write(joystickValue[0]);
+  Serial2.write(joystickValue[1]);
+  Serial2.write(joystickValue[2]);
+  Serial2.write(button1[0]);
+  Serial2.write(button1[1]);
 }
 
 void checkInput() {
@@ -73,9 +55,19 @@ void checkInput() {
     // if (PS4.Up()) Serial.println("Up Button");
     // if (PS4.Left()) Serial.println("Left Button");
 
-    // if (PS4.Square()) Serial.println("Square Button");
+    if (PS4.Square())
+    {
+      Serial.println("Square Button");
+      Serial2.end();
+    }
     // if (PS4.Cross()) Serial.println("Cross Button");
-    // if (PS4.Circle()) Serial.println("Circle Button");
+    if (PS4.Circle())
+    {
+      Serial.println("Circle Button");
+      
+      // Initiate UART2 for Master EPS32
+      Serial2.begin(115200, SERIAL_8N1, 16, 17);
+    }
     // if (PS4.Triangle()) Serial.println("Triangle Button");
 
     // if (PS4.UpRight()) Serial.println("Up Right");
@@ -83,8 +75,19 @@ void checkInput() {
     // if (PS4.UpLeft()) Serial.println("Up Left");
     // if (PS4.DownLeft()) Serial.println("Down Left");
 
-    // if (PS4.L1()) Serial.println("L1 Button");
-    // if (PS4.R1()) Serial.println("R1 Button");
+    if (PS4.L1())
+    {
+      Serial.println("L1 Button");
+      button1[0] = 3;
+    }
+    else button1[0] = 0;
+
+    if (PS4.R1())
+    {
+      Serial.println("R1 Button");
+      button1[1] = 2;
+    }
+    else button1[1] = 0;
 
     // if (PS4.Share()) Serial.println("Share Button");
     // if (PS4.Options()) Serial.println("Options Button");
@@ -100,36 +103,28 @@ void checkInput() {
     // if (PS4.LStickX())
     // {
     //   Serial.printf("Left Stick x at %d\n", PS4.LStickX());
-    //   int8_t LSX = PS4.LStickX();
-    //   joystick_sentData.joystick = LSX;
-    //   joystickUART();
+    //   joystickValue[0] = PS4.LStickX();
+    //   // int8_t LSX = PS4.LStickX();
+    //   // joystick_sentData.joystick = LSX;
+    //   // joystickUART();
     // }
 
     if (PS4.LStickY())
     {
       Serial.printf("Left Stick y at %d\n", PS4.LStickY());
       joystickValue[0] = PS4.LStickY();
-      // int8_t LSY = PS4.LStickY();
-      // joystick_sentData.LJSY = LSY;
-      // joystickUART();
     }
 
     if (PS4.RStickX())
     {
       Serial.printf("Right Stick x at %d\n", PS4.RStickX());
       joystickValue[1] = PS4.RStickX();
-      // int8_t RSX = PS4.RStickX();
-      // joystick_sentData.RJSX = RSX;
-      // joystickUART();
     }
 
     if (PS4.RStickY())
     {
       Serial.printf("Right Stick y at %d\n", PS4.RStickY());
       joystickValue[2] = PS4.RStickY();
-      // int8_t RSY = PS4.RStickY();
-      // joystick_sentData.RJSY = RSY;
-      // joystickUART();
     }
 
     // if (PS4.Charging()) Serial.println("The controller is charging");
